@@ -1,2 +1,2 @@
-# ZOMBIE
- Beloved Store Manager of Hell Mart
+# ZOMBIE1.0
+ General Purpose Bot for HellMart
