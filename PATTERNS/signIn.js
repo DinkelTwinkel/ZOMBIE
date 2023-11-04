@@ -141,7 +141,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
     if (interaction.customId === 'enterHell') {
 
-        interaction.reply({ content: 'w%l!%2 ba2c', ephemeral: true });
+        await interaction.reply({ content: 'w%l!%2 ba2c', ephemeral: true });
 
         setTimeout(() => {
             interaction.editReply({ content: 'w!lc@m@$ tba 767^', ephemeral: true });
