@@ -8,7 +8,6 @@ require('log-timestamp');
 const cypherSpeak = require('./PATTERNS/cypherSpeak.js');
 const debugAss = require('./secretCommands/debugAssignIdentity.js');
 const channelWhitelist = require('./models/channelWhiteList.js');
-const { channel } = require('diagnostics_channel');
 const Location = require('./models/location.js');
 
 // Create a new client instance
@@ -99,12 +98,6 @@ client.once(Events.ClientReady, async c => {
   setInterval(() => {
     membersWithRole = hellMart.members.cache.filter(member => member.roles.cache.has('1167076504434397246'));
     counterChannel.setName(`${membersWithRole.size} Shopping 🛒`);
-    // clean unused channels.
-
-    // Get all channels
-    // IF Channel is not the following.
-
-
   }, (60 * 1000 * 5) + 1000);
 
   const allChannels = hellMart.channels.cache;
