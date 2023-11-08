@@ -204,7 +204,7 @@ client.on(Events.MessageCreate, async (message) => {
 		// Extract the command and any arguments
 		const args = message.content.slice(1).trim().split(/ +/);
 		const command = args.shift().toLowerCase();
-
+    // console.log (command);
 		// Check the command and respond
 		if (command === 'paw') {
 			cypherSpeak('# WOOF!', message.channel, 200, 1);
@@ -214,7 +214,7 @@ client.on(Events.MessageCreate, async (message) => {
 			await debugAss(message.guild);
 			message.channel.send('Complete');
 		}
-    else if (command === 'whiteListChannel') {
+    else if (command === 'whitelistchannel') {
 
       console.log('attempting to whitelist Channel');
       const newWhiteList = new channelWhitelist ({
@@ -222,7 +222,13 @@ client.on(Events.MessageCreate, async (message) => {
         channelName: message.channel.name,
       });
 
+      const newWhiteListParent = new channelWhitelist ({
+        channelID: message.channel.parent.id,
+        channelName: message.channel.parent.name,
+      });
+
       await newWhiteList.save();
+      await newWhiteListParent.save();
       message.channel.send('WhiteListAdded');
 		}
 		// Add more commands here as needed
