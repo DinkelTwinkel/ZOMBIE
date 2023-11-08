@@ -88,31 +88,31 @@ client.once(Events.ClientReady, async c => {
 
   // auto updator for mart user count
 
-  // await hellMart.members.fetch();
+  await hellMart.members.fetch();
 
-  // const counterChannel = hellMart.channels.cache.get('1166527027071950848');
-  // let membersWithRole = hellMart.members.cache.filter(member => member.roles.cache.has('1167076504434397246'));
-  // counterChannel.setName(`${membersWithRole.size} Shopping 🛒`);
+  const counterChannel = await hellMart.channels.fetch('1171802752846921750');
+  let membersWithRole = hellMart.members.cache.filter(member => member.roles.cache.has('1167076504434397246'));
+  counterChannel.setName(`${membersWithRole.size} Shopping 🛒`);
 
-  // // Mart Counter.
+  // Mart Counter.
 
-  // setInterval(() => {
-  //   membersWithRole = hellMart.members.cache.filter(member => member.roles.cache.has('1167076504434397246'));
-  //   counterChannel.setName(`${membersWithRole.size} Shopping 🛒`);
-  //   // clean unused channels.
+  setInterval(() => {
+    membersWithRole = hellMart.members.cache.filter(member => member.roles.cache.has('1167076504434397246'));
+    counterChannel.setName(`${membersWithRole.size} Shopping 🛒`);
+    // clean unused channels.
 
-  //   // Get all channels
-  //   // IF Channel is not the following.
+    // Get all channels
+    // IF Channel is not the following.
 
 
-  // }, (60 * 1000 * 5) + 1000);
+  }, (60 * 1000 * 5) + 1000);
 
-  // const allChannels = hellMart.channels.cache;
-  // allChannels.forEach((channelToClean) => {
+  const allChannels = hellMart.channels.cache;
+  allChannels.forEach((channelToClean) => {
 
-  //   checkChannel(channelToClean);
+    checkChannel(channelToClean);
 
-  // });
+  });
 
   const temp = require('./TempCode');
   temp(client, hellMart);

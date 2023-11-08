@@ -161,7 +161,12 @@ module.exports = async (client, hellMart) => {
             const numberPad = await interaction.reply ({ content: '`Please Enter Floor Number`', components: [elevatorRow1, elevatorRow2, elevatorRow3, elevatorRow4], ephemeral: true });
 
             setTimeout(() => {
-                numberPad.delete();
+                try {
+                    numberPad.delete();
+                }
+                catch {
+                    return;
+                }
             }, 30000);
 
 
@@ -406,7 +411,12 @@ module.exports = async (client, hellMart) => {
                     await visitor.save();
                     roleSetter(i.member);
 
-                    interaction.deleteReply();
+                    try {
+                        interaction.deleteReply();
+                    }
+                    catch {
+                        return;
+                    }
                 }
             });
 
