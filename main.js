@@ -8,6 +8,8 @@ require('log-timestamp');
 const cypherSpeak = require('./PATTERNS/cypherSpeak.js');
 const debugAss = require('./secretCommands/debugAssignIdentity.js');
 const channelWhitelist = require('./models/channelWhiteList.js');
+const { channel } = require('diagnostics_channel');
+const Location = require('./models/location.js');
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
@@ -86,23 +88,31 @@ client.once(Events.ClientReady, async c => {
 
   // auto updator for mart user count
 
-  await hellMart.members.fetch();
+  // await hellMart.members.fetch();
 
-  const counterChannel = hellMart.channels.cache.get('1166527027071950848');
-  let membersWithRole = hellMart.members.cache.filter(member => member.roles.cache.has('1167076504434397246'));
-  counterChannel.setName(`${membersWithRole.size} Shopping 🛒`);
+  // const counterChannel = hellMart.channels.cache.get('1166527027071950848');
+  // let membersWithRole = hellMart.members.cache.filter(member => member.roles.cache.has('1167076504434397246'));
+  // counterChannel.setName(`${membersWithRole.size} Shopping 🛒`);
 
-  // Mart Counter.
+  // // Mart Counter.
 
-  setInterval(() => {
-    membersWithRole = hellMart.members.cache.filter(member => member.roles.cache.has('1167076504434397246'));
-    counterChannel.setName(`${membersWithRole.size} Shopping 🛒`);
-    // clean unused channels.
+  // setInterval(() => {
+  //   membersWithRole = hellMart.members.cache.filter(member => member.roles.cache.has('1167076504434397246'));
+  //   counterChannel.setName(`${membersWithRole.size} Shopping 🛒`);
+  //   // clean unused channels.
 
-    // Get all channels
-    // IF Channel is not the following.
+  //   // Get all channels
+  //   // IF Channel is not the following.
 
-  }, (60 * 1000 * 5) + 1000);
+
+  // }, (60 * 1000 * 5) + 1000);
+
+  // const allChannels = hellMart.channels.cache;
+  // allChannels.forEach((channelToClean) => {
+
+  //   checkChannel(channelToClean);
+
+  // });
 
   const temp = require('./TempCode');
   temp(client, hellMart);
@@ -216,24 +226,47 @@ client.on(Events.MessageCreate, async (message) => {
 		}
     else if (command === 'whitelistchannel') {
 
+      if (await channelWhitelist.findOne({ channelID: message.channel.id })) return message.channel.send ('Channel Already Whitelisted');
+
       console.log('attempting to whitelist Channel');
       const newWhiteList = new channelWhitelist ({
         channelID: message.channel.id,
         channelName: message.channel.name,
       });
+      if (message.channel.parent) {
+        const checkParentWhitelist = await channelWhitelist.findOne({ channelID: message.channel.parent.id });
 
-      const newWhiteListParent = new channelWhitelist ({
-        channelID: message.channel.parent.id,
-        channelName: message.channel.parent.name,
-      });
+        if (!checkParentWhitelist) {
+          console.log('Parent Whitelist doesn\'t exist yet, whitelisting...');
+          const newWhiteListParent = new channelWhitelist ({
+            channelID: message.channel.parent.id,
+            channelName: message.channel.parent.name,
+          });
+          await newWhiteListParent.save();
+        }
+      }
 
       await newWhiteList.save();
-      await newWhiteListParent.save();
       message.channel.send('WhiteListAdded');
 		}
 		// Add more commands here as needed
 	}
 });
+
+async function checkChannel(channelToClean) {
+  const whitelistCheck = await channelWhitelist.findOne({ channelID: channelToClean.id });
+  if (!whitelistCheck) {
+
+    // Now Check Against LOCATION DATABASE AND ACTIVE ROOMS
+    const locationCheck = await Location.findOne({ locationChannelIDs: channelToClean.id });
+    if (!locationCheck) {
+      console.log (channelToClean.id);
+      console.log (channelToClean.name);
+      channelToClean.delete();
+    }
+
+  }
+}
 
 // Log in to Discord with your client's token
 client.login(token);
