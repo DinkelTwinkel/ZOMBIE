@@ -215,6 +215,8 @@ client.on(Events.MessageCreate, async (message) => {
 			message.channel.send('Complete');
 		}
     else if (command === 'whiteListChannel') {
+
+      console.log('attempting to whitelist Channel');
       const newWhiteList = new channelWhitelist ({
         channelID: message.channel.id,
         channelName: message.channel.name,
