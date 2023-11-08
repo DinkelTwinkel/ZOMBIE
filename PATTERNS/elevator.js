@@ -318,7 +318,7 @@ module.exports = async (client, hellMart) => {
                     console.log ('Exiting...');
 
                     const visitor = await Visitor.findOne ({ userID: i.user.id });
-                    const location = await Location.findOne ({ floor: visitor.currentLocation });
+                    let location = await Location.findOne ({ floor: visitor.currentLocation });
                     await i.deferUpdate();
 
                     // check if location is dynamic && active = false then generate new channels and overwrite old records. If
@@ -403,6 +403,8 @@ module.exports = async (client, hellMart) => {
 
                         // sets it to active so it doesn't attempt to generate again.
 
+                        location = await Location.findOne ({ floor: visitor.currentLocation });
+
                         location.active = true;
                         await location.save();
                     }
@@ -439,6 +441,7 @@ async function createChannel(hellMart, channel, channelType, newCategory, locati
 
     console.log ('New Category Created: ' + newCategory.name);
     location.locationChannelIDs.push(newChannel.id);
+    await location.save();
 
     console.log ('New Channel Created: ' + newChannel.name);
 
@@ -455,7 +458,7 @@ async function dynamicChanneCleanup(interaction, hellMart) {
 
     // now check users with the role left. E.G fetch all members and then get roles count.
 
-    // await hellMart.members.cache();
+    await hellMart.members.fetch();
 
     const dynamicRole = hellMart.roles.cache.get(location.locationAccessRoleID);
 
@@ -468,7 +471,12 @@ async function dynamicChanneCleanup(interaction, hellMart) {
         await location.save();
         dynamicRole.delete();
         location.locationChannelIDs.forEach((id) => {
-            hellMart.channels.cache.get(id).delete();
+            try {
+                hellMart.channels.cache.get(id).delete();
+            }
+            catch {
+                return;
+            }
         });
     }
 }
