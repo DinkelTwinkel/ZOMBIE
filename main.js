@@ -7,6 +7,7 @@ require('log-timestamp');
 
 const cypherSpeak = require('./PATTERNS/cypherSpeak.js');
 const debugAss = require('./secretCommands/debugAssignIdentity.js');
+const channelWhitelist = require('./models/channelWhiteList.js');
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
@@ -96,6 +97,11 @@ client.once(Events.ClientReady, async c => {
   setInterval(() => {
     membersWithRole = hellMart.members.cache.filter(member => member.roles.cache.has('1167076504434397246'));
     counterChannel.setName(`${membersWithRole.size} Shopping 🛒`);
+    // clean unused channels.
+
+    // Get all channels
+    // IF Channel is not the following.
+
   }, (60 * 1000 * 5) + 1000);
 
   const temp = require('./TempCode');
@@ -207,6 +213,15 @@ client.on(Events.MessageCreate, async (message) => {
 			message.channel.send('FixingRecords');
 			await debugAss(message.guild);
 			message.channel.send('Complete');
+		}
+    else if (command === 'whiteListChannel') {
+      const newWhiteList = new channelWhitelist ({
+        channelID: message.channel.id,
+        channelName: message.channel.name,
+      });
+
+      await newWhiteList.save();
+      message.channel.send('WhiteListAdded');
 		}
 		// Add more commands here as needed
 	}

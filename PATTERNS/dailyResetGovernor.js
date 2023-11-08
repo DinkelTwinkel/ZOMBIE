@@ -24,7 +24,7 @@ async function checkMemberTime(member) {
     const now = new Date();
 
     // Add 24 hours to the current date and time
-    now.setUTCHours(now.getUTCHours() + 24);
+    now.setUTCHours(now.getUTCHours() + (24 * 30));
     // Get the UTC milliseconds for the date 24 hours from now
     const utcMilliseconds = now.getTime();
 
